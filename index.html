@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Gut Sound Analyzer</title>
+  <style>
+    body {
+      background-color: orange;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    #uploadBtn {
+      background: white;
+      color: orange;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #results {
+      margin-top: 40px;
+      font-size: 18px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Gut Sound Analyzer</h1>
+
+  <input type="file" id="audioInput" accept="audio/*" hidden>
+  <button id="uploadBtn">Upload Audio</button>
+
+  <div id="results"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

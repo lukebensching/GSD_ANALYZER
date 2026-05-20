@@ -1,0 +1,6 @@
+[theme]
+primaryColor="#D73F09"              # OSU Orange
+backgroundColor="#FAF7F2"           # Cream
+secondaryBackgroundColor="#F0E9DF"  # Slightly darker cream
+textColor="#1A1A1A"                 # Black
+font="sans serif"
