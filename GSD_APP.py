@@ -3,7 +3,6 @@
 
 import streamlit as st
 import requests
-import io
 
 # -----------------------------
 # CONFIG
@@ -16,7 +15,28 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🔊 Gut Sound Analyzer")
+# -----------------------------
+# OSU-CASCADES HEADER
+# -----------------------------
+st.markdown(
+    """
+    <div style="
+        background-color:#D73F09;
+        padding:18px;
+        border-radius:8px;
+        text-align:center;
+        margin-bottom:25px;">
+        <h1 style="color:white; margin:0; font-size:32px;">
+            🔊 Gut Sound Analyzer
+        </h1>
+        <p style="color:white; margin:0; font-size:16px;">
+            Oregon State University – Cascades • AI‑Powered Gut Acoustics
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 st.write("Upload an audio file and the backend will analyze gut sounds using AI.")
 
 # -----------------------------
@@ -31,7 +51,16 @@ if uploaded_file is not None:
     st.audio(uploaded_file, format="audio/wav")
 
     if st.button("Analyze Audio"):
-        st.write("⏳ Analyzing audio with backend...")
+        st.markdown(
+            """
+            <div style="padding:12px; background-color:#FAF7F2;
+                        border-left:6px solid #D73F09; border-radius:6px;
+                        margin-top:20px; margin-bottom:20px;">
+                <strong>⏳ Analyzing audio with backend...</strong>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         # Prepare file for backend
         files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
@@ -43,25 +72,93 @@ if uploaded_file is not None:
                 timeout=300
             )
 
+            # -----------------------------
+            # OSU-CASCADES THEMED RESULTS
+            # -----------------------------
             if response.status_code == 200:
                 result = response.json()
 
-                st.success("Analysis complete!")
+                st.markdown(
+                    """
+                    <div style="padding: 12px; background-color: #FAF7F2; 
+                                border-left: 6px solid #D73F09; border-radius: 6px;
+                                margin-top: 20px; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #1A1A1A;">Analysis Complete</h3>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-                # Display events
+                # Events Section
                 if "events" in result:
-                    st.subheader("Detected Gut Sound Events")
+                    st.markdown(
+                        """
+                        <h3 style="color:#D73F09; margin-top: 25px;">
+                            Detected Gut Sound Events
+                        </h3>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    event_icons = {
+                        "gurgle": "💧",
+                        "rumble": "🌩️",
+                        "pop": "🫧",
+                        "unknown": "❓"
+                    }
+
                     for event in result["events"]:
-                        st.write(f"- **{event['type']}** at {event['time']} sec (confidence {event['confidence']:.2f})")
+                        icon = event_icons.get(event["type"], "🔊")
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background-color:#F0E9DF;
+                                padding:12px;
+                                border-radius:8px;
+                                margin-bottom:10px;
+                                border-left:4px solid #D73F09;">
+                                <strong style="font-size:16px;">
+                                    {icon} {event['type'].capitalize()}
+                                </strong><br>
+                                <span style="color:#333;">
+                                    Time: {event['time']} sec
+                                </span><br>
+                                <span style="color:#555;">
+                                    Confidence: {event['confidence']:.2f}
+                                </span>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
 
-                # Display GPT summary
+                # Summary Section
                 if "summary" in result:
-                    st.subheader("AI Summary")
-                    st.write(result["summary"])
+                    st.markdown("<hr>", unsafe_allow_html=True)
+                    st.markdown(
+                        """
+                        <h3 style="color:#D73F09;">AI Summary</h3>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    st.markdown(
+                        f"""
+                        <div style="background-color:#FAF7F2; padding:15px; border-radius:8px;
+                                    border-left:4px solid #D73F09; color:#1A1A1A;">
+                            {result['summary']}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
-                # Display spectrogram if backend returns it
+                # Spectrogram Section
                 if "spectrogram" in result:
-                    st.subheader("Spectrogram")
+                    st.markdown("<hr>", unsafe_allow_html=True)
+                    st.markdown(
+                        """
+                        <h3 style="color:#D73F09;">Spectrogram</h3>
+                        """,
+                        unsafe_allow_html=True
+                    )
                     st.image(result["spectrogram"])
 
             else:
