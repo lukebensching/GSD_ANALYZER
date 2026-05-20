@@ -163,7 +163,7 @@ div.stButton > button:active {
 """, unsafe_allow_html=True)
 
 # ---- File Upload ----
-FASTAPI_URL = "http://127.0.0.1:8000/analyze"
+FASTAPI_URL = "http://gsd-analyzer.onrender.com/analyze"
 
 uploaded = st.file_uploader("Drop audio file here", type=["wav", "mp3", "m4a"])
 
