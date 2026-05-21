@@ -118,7 +118,8 @@ if uploaded_file is not None:
                         unsafe_allow_html=True
                     )
                     if "spectrogram" in result:
-                        st.image(result["spectrogram"])
+                        spectrogram_bytes = base64.b64decode(result["spectrogram"])
+                        st.image(spectrogram_bytes)
                     else:
                         st.info("No spectrogram returned by backend.")
 
