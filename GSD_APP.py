@@ -12,7 +12,7 @@ FASTAPI_URL = "https://gsd-analyzer.onrender.com/analyze"
 st.set_page_config(
     page_title="Gut Sound Analyzer",
     page_icon="🔊",
-    layout="centered"
+    layout="wide"
 )
 
 # -----------------------------
@@ -27,7 +27,7 @@ st.markdown(
         text-align:center;
         margin-bottom:25px;">
         <h1 style="color:white; margin:0; font-size:32px;">
-            🔊 Gut Sound Analyzer
+             Gut Sound Analyzer
         </h1>
         <p style="color:white; margin:0; font-size:16px;">
             Oregon State University – Cascades • AI‑Powered Gut Acoustics
@@ -37,7 +37,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.write("Upload an audio file and the backend will analyze gut sounds using AI.")
+st.write("Upload an audio file and the backend will analyze gut sounds.")
 
 # -----------------------------
 # FILE UPLOAD
@@ -56,13 +56,12 @@ if uploaded_file is not None:
             <div style="padding:12px; background-color:#FAF7F2;
                         border-left:6px solid #D73F09; border-radius:6px;
                         margin-top:20px; margin-bottom:20px;">
-                <strong>⏳ Analyzing audio with backend...</strong>
+                <strong>Analyzing audio with...</strong>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        # Prepare file for backend
         files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
 
         try:
@@ -72,30 +71,51 @@ if uploaded_file is not None:
                 timeout=300
             )
 
-            # -----------------------------
-            # OSU-CASCADES THEMED RESULTS
-            # -----------------------------
             if response.status_code == 200:
                 result = response.json()
 
-                st.markdown(
-                    """
-                    <div style="padding: 12px; background-color: #FAF7F2; 
-                                border-left: 6px solid #D73F09; border-radius: 6px;
-                                margin-top: 20px; margin-bottom: 20px;">
-                        <h3 style="margin: 0; color: #1A1A1A;">Analysis Complete</h3>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                # -----------------------------
+                # TABS
+                # -----------------------------
+                tab1, tab2, tab3, tab4 = st.tabs(
+                    ["Waveform", "Spectrogram", "Events", "Summary"]
                 )
 
-                # Events Section
-                if "events" in result:
+                # -----------------------------
+                # WAVEFORM TAB
+                # -----------------------------
+                with tab1:
                     st.markdown(
                         """
-                        <h3 style="color:#D73F09; margin-top: 25px;">
-                            Detected Gut Sound Events
-                        </h3>
+                        <h3 style="color:#D73F09;">Waveform</h3>
+                        <p style="color:#444;">Original uploaded audio.</p>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    st.audio(uploaded_file)
+
+                # -----------------------------
+                # SPECTROGRAM TAB
+                # -----------------------------
+                with tab2:
+                    st.markdown(
+                        """
+                        <h3 style="color:#D73F09;">Spectrogram</h3>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    if "spectrogram" in result:
+                        st.image(result["spectrogram"])
+                    else:
+                        st.info("No spectrogram returned by backend.")
+
+                # -----------------------------
+                # EVENTS TAB
+                # -----------------------------
+                with tab3:
+                    st.markdown(
+                        """
+                        <h3 style="color:#D73F09;">Detected Gut Sound Events</h3>
                         """,
                         unsafe_allow_html=True
                     )
@@ -107,59 +127,55 @@ if uploaded_file is not None:
                         "unknown": "❓"
                     }
 
-                    for event in result["events"]:
-                        icon = event_icons.get(event["type"], "🔊")
-                        st.markdown(
-                            f"""
-                            <div style="
-                                background-color:#F0E9DF;
-                                padding:12px;
-                                border-radius:8px;
-                                margin-bottom:10px;
-                                border-left:4px solid #D73F09;">
-                                <strong style="font-size:16px;">
-                                    {icon} {event['type'].capitalize()}
-                                </strong><br>
-                                <span style="color:#333;">
-                                    Time: {event['time']} sec
-                                </span><br>
-                                <span style="color:#555;">
-                                    Confidence: {event['confidence']:.2f}
-                                </span>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                    if "events" in result:
+                        for event in result["events"]:
+                            icon = event_icons.get(event["type"], "🔊")
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    background-color:#F0E9DF;
+                                    padding:12px;
+                                    border-radius:8px;
+                                    margin-bottom:10px;
+                                    border-left:4px solid #D73F09;">
+                                    <strong style="font-size:16px;">
+                                        {icon} {event['type'].capitalize()}
+                                    </strong><br>
+                                    <span style="color:#333;">
+                                        Time: {event['time']} sec
+                                    </span><br>
+                                    <span style="color:#555;">
+                                        Confidence: {event['confidence']:.2f}
+                                    </span>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                    else:
+                        st.info("No events returned by backend.")
 
-                # Summary Section
-                if "summary" in result:
-                    st.markdown("<hr>", unsafe_allow_html=True)
+                # -----------------------------
+                # SUMMARY TAB
+                # -----------------------------
+                with tab4:
                     st.markdown(
                         """
                         <h3 style="color:#D73F09;">AI Summary</h3>
                         """,
                         unsafe_allow_html=True
                     )
-                    st.markdown(
-                        f"""
-                        <div style="background-color:#FAF7F2; padding:15px; border-radius:8px;
-                                    border-left:4px solid #D73F09; color:#1A1A1A;">
-                            {result['summary']}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-                # Spectrogram Section
-                if "spectrogram" in result:
-                    st.markdown("<hr>", unsafe_allow_html=True)
-                    st.markdown(
-                        """
-                        <h3 style="color:#D73F09;">Spectrogram</h3>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    st.image(result["spectrogram"])
+                    if "summary" in result:
+                        st.markdown(
+                            f"""
+                            <div style="background-color:#FAF7F2; padding:15px; border-radius:8px;
+                                        border-left:4px solid #D73F09; color:#1A1A1A;">
+                                {result['summary']}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                    else:
+                        st.info("No summary returned by backend.")
 
             else:
                 st.error(f"Backend error: {response.status_code}")
@@ -170,7 +186,6 @@ if uploaded_file is not None:
         except Exception as e:
             st.error("An unexpected error occurred.")
             st.write(str(e))
-
 
             
             
