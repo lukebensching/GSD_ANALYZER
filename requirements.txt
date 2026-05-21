@@ -1,10 +1,9 @@
 fastapi
 uvicorn
-librosa
-numpy
-pydub
-requests
-matplotlib
-streamlit
 python-dotenv
 openai
+librosa
+numpy
+soundfile
+audioread
+matplotlib
