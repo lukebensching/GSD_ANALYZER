@@ -7,3 +7,4 @@ numpy
 soundfile
 audioread
 matplotlib
+python-multipart
