@@ -59,13 +59,13 @@ st.markdown(
 # -----------------------------
 # CENTERED FILE UPLOADER
 # -----------------------------
-st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-uploaded_file = st.file_uploader(
-    "Choose an audio file",
-    type=["wav", "mp3", "m4a"],
-    label_visibility="visible"
-)
-st.markdown("</div>", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    uploaded_file = st.file_uploader(
+        "Choose an audio file",
+        type=["wav", "mp3", "m4a"],
+        label_visibility="visible"
+    )
 
 # -----------------------------
 # PROCESSING
@@ -73,9 +73,9 @@ st.markdown("</div>", unsafe_allow_html=True)
 if uploaded_file is not None:
 
     # Center the analyze button
-    st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-    analyze_clicked = st.button("Analyze Audio")
-    st.markdown("</div>", unsafe_allow_html=True)
+    colA, colB, colC = st.columns([1, 2, 1])
+    with colB:
+        analyze_clicked = st.button("Analyze Audio")
 
     if analyze_clicked:
 
@@ -185,8 +185,6 @@ if uploaded_file is not None:
             st.error("An unexpected error occurred.")
             st.write(str(e))
 
-
-            
             
             
             
