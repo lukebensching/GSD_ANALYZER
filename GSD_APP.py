@@ -40,12 +40,17 @@ st.markdown(
 )
 
 # -----------------------------
-# CENTERED SUBTITLE
+# PROJECT DESCRIPTION
 # -----------------------------
 st.markdown(
     """
-    <div style="text-align:center; font-size:18px; margin-top:-10px; margin-bottom:20px;">
-        Upload an audio file and the backend will analyze gut sounds.
+    <div style="text-align:center; font-size:18px; max-width:800px; margin:auto; margin-bottom:25px;">
+        This tool analyzes abdominal audio recordings to detect gut sound events such as 
+        <strong>rumbles, gurgles,</strong> and <strong>pops</strong>.  
+        Using a FastAPI backend and AI‑powered acoustic models, the system extracts features, 
+        identifies events, and generates a natural‑language summary of gut activity.
+        <br><br>
+        Upload an audio file below to begin the analysis.
     </div>
     """,
     unsafe_allow_html=True
@@ -56,7 +61,7 @@ st.markdown(
 # -----------------------------
 st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
-    "Upload Audio",
+    "Choose an audio file",
     type=["wav", "mp3", "m4a"],
     label_visibility="visible"
 )
@@ -66,15 +71,22 @@ st.markdown("</div>", unsafe_allow_html=True)
 # PROCESSING
 # -----------------------------
 if uploaded_file is not None:
-    st.audio(uploaded_file, format="audio/wav")
 
-    if st.button("Analyze Audio"):
-        st.markdown(
+    # Center the analyze button
+    st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+    analyze_clicked = st.button("Analyze Audio")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if analyze_clicked:
+
+        # Temporary analyzing message
+        analyzing_box = st.empty()
+        analyzing_box.markdown(
             """
             <div style="padding:12px; background-color:#FAF7F2;
                         border-left:6px solid #D73F09; border-radius:6px;
-                        margin-top:20px; margin-bottom:20px;">
-                <strong>Analyzing audio...</strong>
+                        margin-top:20px; margin-bottom:20px; text-align:center;">
+                <strong>Analyzing audio... This may take a few seconds.</strong>
             </div>
             """,
             unsafe_allow_html=True
@@ -89,25 +101,18 @@ if uploaded_file is not None:
                 timeout=300
             )
 
+            # Remove the analyzing message
+            analyzing_box.empty()
+
             if response.status_code == 200:
                 result = response.json()
 
                 # -----------------------------
-                # TABS
+                # TABS (NO WAVEFORM TAB)
                 # -----------------------------
-                tab1, tab2, tab3, tab4 = st.tabs(
-                    ["Waveform", "Spectrogram", "Events", "Summary"]
+                tab2, tab3, tab4 = st.tabs(
+                    ["Spectrogram", "Events", "Summary"]
                 )
-
-                # -----------------------------
-                # WAVEFORM TAB
-                # -----------------------------
-                with tab1:
-                    st.markdown(
-                        "<h3 style='color:#D73F09;'>Waveform</h3>",
-                        unsafe_allow_html=True
-                    )
-                    st.audio(uploaded_file)
 
                 # -----------------------------
                 # SPECTROGRAM TAB
@@ -124,7 +129,7 @@ if uploaded_file is not None:
                         st.info("No spectrogram returned by backend.")
 
                 # -----------------------------
-                # EVENTS TAB (TABLE VIEW)
+                # EVENTS TAB
                 # -----------------------------
                 with tab3:
                     st.markdown(
@@ -168,14 +173,18 @@ if uploaded_file is not None:
                         st.info("No summary returned by backend.")
 
             else:
+                analyzing_box.empty()
                 st.error(f"Backend error: {response.status_code}")
                 st.write(response.text)
 
         except requests.exceptions.ReadTimeout:
+            analyzing_box.empty()
             st.error("Backend timed out. Try a shorter audio clip or try again.")
         except Exception as e:
+            analyzing_box.empty()
             st.error("An unexpected error occurred.")
             st.write(str(e))
+
 
             
             
