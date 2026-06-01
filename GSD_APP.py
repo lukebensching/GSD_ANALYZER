@@ -18,24 +18,26 @@ st.set_page_config(
 )
 
 # -----------------------------
-# OSU-CASCADES HEADER (clean + centered)
+# OSU-CASCADES HEADER
 # -----------------------------
-st.markdown(
-    """
-    <div style="text-align:center; margin-bottom:25px;">
-        <h1 style="color:#D73F09; font-size:42px; margin-bottom:5px;">
-            Gut Sound Analyzer
-        </h1>
-        <p style="color:#444; font-size:18px; margin-top:0;">
-            Oregon State University – Cascades • AI‑Powered Gut Acoustics
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+header_col = st.columns([1, 6, 1])[1]
+with header_col:
+    st.markdown(
+        """
+        <div style="text-align:center; margin-bottom:25px;">
+            <h1 style="color:#D73F09; font-size:42px; margin-bottom:5px;">
+                Gut Sound Analyzer
+            </h1>
+            <p style="color:#444; font-size:18px; margin-top:0;">
+                Oregon State University – Cascades • AI‑Powered Gut Acoustics
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # -----------------------------
-# PROJECT DESCRIPTION (Option 1)
+# PROJECT DESCRIPTION
 # -----------------------------
 st.markdown(
     """
@@ -58,7 +60,7 @@ st.markdown(
 )
 
 # -----------------------------
-# CENTERED FILE UPLOADER (true centering)
+# CENTERED FILE UPLOADER 
 # -----------------------------
 center = st.columns([3, 4, 3])[1]
 with center:
