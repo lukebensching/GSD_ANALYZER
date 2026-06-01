@@ -13,25 +13,19 @@ FASTAPI_URL = "https://gsd-analyzer.onrender.com/analyze"
 
 st.set_page_config(
     page_title="Gut Sound Analyzer",
-    page_icon="🔊",
+    page_icon="🦫",
     layout="wide"
 )
-
 # -----------------------------
 # OSU-CASCADES HEADER
 # -----------------------------
 st.markdown(
     """
-    <div style="
-        background-color:#D73F09;
-        padding:18px;
-        border-radius:8px;
-        text-align:center;
-        margin-bottom:25px;">
-        <h1 style="color:white; margin:0; font-size:32px;">
+    <div style="text-align:center; margin-bottom:25px;">
+        <h1 style="color:#D73F09; font-size:42px; margin-bottom:5px;">
             Gut Sound Analyzer
         </h1>
-        <p style="color:white; margin:0; font-size:16px;">
+        <p style="color:#444; font-size:18px; margin-top:0;">
             Oregon State University – Cascades • AI‑Powered Gut Acoustics
         </p>
     </div>
@@ -45,12 +39,18 @@ st.markdown(
 st.markdown(
     """
     <div style="text-align:center; font-size:18px; max-width:800px; margin:auto; margin-bottom:25px;">
-        This tool analyzes abdominal audio recordings to detect gut sound events such as 
-        <strong>rumbles, gurgles,</strong> and <strong>pops</strong>.  
-        Using a FastAPI backend and AI‑powered acoustic models, the system extracts features, 
-        identifies events, and generates a natural‑language summary of gut activity.
+        The human digestive system produces a variety of sounds — rumbles, gurgles, pops, 
+        and subtle acoustic patterns that often go unnoticed. These sounds can reflect motility, 
+        inflammation, or disruptions in normal gut activity, yet they’re rarely measured outside 
+        clinical settings.
         <br><br>
-        Upload an audio file below to begin the analysis.
+        This project explores whether everyday abdominal audio recordings can be analyzed using 
+        modern AI techniques to help identify meaningful gut sound patterns. By detecting acoustic 
+        events and summarizing activity, this tool demonstrates how non‑invasive audio monitoring 
+        could one day support early screening, symptom tracking, or research into conditions such 
+        as IBS, Crohn’s disease, and other gastrointestinal disorders.
+        <br><br>
+        Upload an audio file below to see how the system interprets gut acoustics in real time.
     </div>
     """,
     unsafe_allow_html=True
@@ -156,7 +156,7 @@ if uploaded_file is not None:
                 # -----------------------------
                 with tab4:
                     st.markdown(
-                        "<h3 style='color:#D73F09;'>AI Summary</h3>",
+                        "<h3 style='color:#D73F09;'>Summary</h3>",
                         unsafe_allow_html=True
                     )
                     if "summary" in result:
