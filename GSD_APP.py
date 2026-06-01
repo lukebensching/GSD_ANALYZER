@@ -16,8 +16,9 @@ st.set_page_config(
     page_icon="🦫",
     layout="wide"
 )
+
 # -----------------------------
-# OSU-CASCADES HEADER
+# OSU-CASCADES HEADER (clean + centered)
 # -----------------------------
 st.markdown(
     """
@@ -34,12 +35,12 @@ st.markdown(
 )
 
 # -----------------------------
-# PROJECT DESCRIPTION
+# PROJECT DESCRIPTION (Option 1)
 # -----------------------------
 st.markdown(
     """
     <div style="text-align:center; font-size:18px; max-width:800px; margin:auto; margin-bottom:25px;">
-        The human digestive system produces a variety of sounds — rumbles, gurgles, pops, 
+        The human digestive system produces a rich landscape of sounds — rumbles, gurgles, pops, 
         and subtle acoustic patterns that often go unnoticed. These sounds can reflect motility, 
         inflammation, or disruptions in normal gut activity, yet they’re rarely measured outside 
         clinical settings.
@@ -57,10 +58,10 @@ st.markdown(
 )
 
 # -----------------------------
-# CENTERED FILE UPLOADER
+# CENTERED FILE UPLOADER (true centering)
 # -----------------------------
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
+center = st.columns([3, 4, 3])[1]
+with center:
     uploaded_file = st.file_uploader(
         "Choose an audio file",
         type=["wav", "mp3", "m4a"],
@@ -73,8 +74,8 @@ with col2:
 if uploaded_file is not None:
 
     # Center the analyze button
-    colA, colB, colC = st.columns([1, 2, 1])
-    with colB:
+    center_btn = st.columns([3, 4, 3])[1]
+    with center_btn:
         analyze_clicked = st.button("Analyze Audio")
 
     if analyze_clicked:
@@ -108,7 +109,7 @@ if uploaded_file is not None:
                 result = response.json()
 
                 # -----------------------------
-                # TABS (NO WAVEFORM TAB)
+                # TABS (Spectrogram, Events, Summary)
                 # -----------------------------
                 tab2, tab3, tab4 = st.tabs(
                     ["Spectrogram", "Events", "Summary"]
@@ -185,6 +186,5 @@ if uploaded_file is not None:
             st.error("An unexpected error occurred.")
             st.write(str(e))
 
-            
             
             
