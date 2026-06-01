@@ -18,13 +18,13 @@ st.set_page_config(
 )
 
 # -----------------------------
-# OSU-CASCADES HEADER
+# HEADER (perfectly centered)
 # -----------------------------
 header_col = st.columns([1, 6, 1])[1]
 with header_col:
     st.markdown(
         """
-        <div style="text-align:center; margin-bottom:25px;">
+        <div style="text-align:center; margin-bottom:10px;">
             <h1 style="color:#D73F09; font-size:42px; margin-bottom:5px;">
                 Gut Sound Analyzer
             </h1>
@@ -35,6 +35,11 @@ with header_col:
         """,
         unsafe_allow_html=True
     )
+
+# -----------------------------
+# SECTION DIVIDER
+# -----------------------------
+st.markdown("<hr style='margin-top:10px; margin-bottom:30px;'>", unsafe_allow_html=True)
 
 # -----------------------------
 # PROJECT DESCRIPTION
@@ -60,7 +65,7 @@ st.markdown(
 )
 
 # -----------------------------
-# CENTERED FILE UPLOADER 
+# CENTERED FILE UPLOADER
 # -----------------------------
 center = st.columns([3, 4, 3])[1]
 with center:
@@ -82,36 +87,40 @@ if uploaded_file is not None:
 
     if analyze_clicked:
 
-        # Temporary analyzing message
-        analyzing_box = st.empty()
-        analyzing_box.markdown(
-            """
-            <div style="padding:12px; background-color:#FAF7F2;
-                        border-left:6px solid #D73F09; border-radius:6px;
-                        margin-top:20px; margin-bottom:20px; text-align:center;">
-                <strong>Analyzing audio... This may take a few seconds.</strong>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        # -----------------------------
+        # PROGRESS BAR
+        # -----------------------------
+        progress = st.progress(0, text="Analyzing audio…")
+
+        progress.progress(20, text="Loading audio…")
 
         files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
 
         try:
+            progress.progress(40, text="Detecting gut sound events…")
+
             response = requests.post(
                 FASTAPI_URL,
                 files=files,
                 timeout=300
             )
 
-            # Remove the analyzing message
-            analyzing_box.empty()
+            progress.progress(60, text="Extracting acoustic features…")
+            progress.progress(80, text="Classifying events with AI…")
+            progress.progress(100, text="Finalizing results…")
+
+            progress.empty()
 
             if response.status_code == 200:
                 result = response.json()
 
                 # -----------------------------
-                # TABS (Spectrogram, Events, Summary)
+                # SECTION DIVIDER
+                # -----------------------------
+                st.markdown("<hr style='margin-top:40px; margin-bottom:20px;'>", unsafe_allow_html=True)
+
+                # -----------------------------
+                # TABS
                 # -----------------------------
                 tab2, tab3, tab4 = st.tabs(
                     ["Spectrogram", "Events", "Summary"]
@@ -141,6 +150,35 @@ if uploaded_file is not None:
                     )
 
                     if "events" in result and len(result["events"]) > 0:
+
+                        # EVENT COUNTS
+                        types = [e["type"].lower() for e in result["events"]]
+                        pop_count = types.count("pop")
+                        gurgle_count = types.count("gurgle")
+                        rumble_count = types.count("rumble")
+
+                        st.markdown(
+                            f"""
+                            <div style="font-size:18px; margin-bottom:10px;">
+                                <strong>Detected:</strong> 
+                                {pop_count} pops • {gurgle_count} gurgles • {rumble_count} rumbles
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                        # TIMELINE
+                        timeline = " | ".join([f"{e['time']}s" for e in result["events"]])
+                        st.markdown(
+                            f"""
+                            <div style="font-family:monospace; font-size:16px; margin-bottom:15px;">
+                                <strong>Timeline:</strong> {timeline}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                        # TABLE
                         df = pd.DataFrame(result["events"])
                         df["time"] = df["time"].round(2)
                         df["confidence"] = df["confidence"].round(2)
@@ -165,8 +203,17 @@ if uploaded_file is not None:
                     if "summary" in result:
                         st.markdown(
                             f"""
-                            <div style="background-color:#FAF7F2; padding:15px; border-radius:8px;
-                                        border-left:4px solid #D73F09; color:#1A1A1A;">
+                            <div style="
+                                background-color:#FAF7F2;
+                                padding:20px;
+                                border-radius:8px;
+                                border-left:4px solid #D73F09;
+                                font-size:17px;
+                                line-height:1.6;
+                                color:#1A1A1A;
+                                max-width:800px;
+                                margin:auto;
+                            ">
                                 {result['summary']}
                             </div>
                             """,
@@ -176,17 +223,31 @@ if uploaded_file is not None:
                         st.info("No summary returned by backend.")
 
             else:
-                analyzing_box.empty()
+                progress.empty()
                 st.error(f"Backend error: {response.status_code}")
                 st.write(response.text)
 
         except requests.exceptions.ReadTimeout:
-            analyzing_box.empty()
+            progress.empty()
             st.error("Backend timed out. Try a shorter audio clip or try again.")
         except Exception as e:
-            analyzing_box.empty()
+            progress.empty()
             st.error("An unexpected error occurred.")
             st.write(str(e))
+
+# -----------------------------
+# FOOTER
+# -----------------------------
+st.markdown(
+    """
+    <div style="text-align:center; margin-top:50px; color:#777; font-size:14px;">
+        Oregon State University – Cascades<br>
+        School of Engineering • 2026
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
             
             
